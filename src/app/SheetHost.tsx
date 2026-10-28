@@ -7,6 +7,7 @@ import { QuickAdd } from '@/features/add/QuickAdd';
 import { CreateFood } from '@/features/add/CreateFood';
 import { ExerciseSheet } from '@/features/workouts/ExerciseSheet';
 import { WeightSheet } from '@/features/me/WeightSheet';
+import { ShareSheet } from '@/features/me/ShareSheet';
 import { WaterSheet } from '@/features/today/WaterSheet';
 import { MealActions, SaveMealSheet } from '@/features/today/MealActions';
 import { useUI, type Sheet } from './store';
@@ -63,6 +64,8 @@ function SheetView({ sheet, hasBack }: { sheet: Sheet; hasBack: boolean }) {
       return <WeightSheet />;
     case 'water':
       return <WaterSheet />;
+    case 'share':
+      return <ShareSheet />;
     case 'mealActions':
       return <MealActions meal={sheet.meal} />;
     case 'saveMeal':

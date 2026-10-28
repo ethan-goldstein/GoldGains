@@ -26,6 +26,7 @@ export type Sheet =
   | { type: 'exercise'; exerciseId?: string; activityId?: string; strength?: boolean }
   | { type: 'weight' }
   | { type: 'water' }
+  | { type: 'share' }
   | { type: 'mealActions'; meal: MealKey }
   | { type: 'saveMeal'; meal: MealKey };
 

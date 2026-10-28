@@ -9,7 +9,7 @@ import { deriveGoals, saveGoals, saveProfile, updateSettings } from '@/db/repo';
 import { db, type Goals } from '@/db/schema';
 import { Lockup, ScreenHeader } from '@/ui/Brand';
 import { NumberField, Toggle } from '@/ui/controls';
-import { IconChevronRight, IconScale } from '@/ui/icons';
+import { IconChevronRight, IconQr, IconScale } from '@/ui/icons';
 import { toast } from '@/ui/Toast';
 import { DataSection } from './DataSection';
 import { ProfileForm } from './ProfileForm';
@@ -30,6 +30,16 @@ export function MeScreen() {
       </ScreenHeader>
       <div className="space-y-3 px-3">
         <SummaryCard profile={profile} goal={goal} lastWeighIn={latestWeight?.date} />
+        <button onClick={() => open({ type: 'share' })} className="press card flex w-full items-center gap-3 p-4 text-left active:bg-surface-2">
+          <span className="grid size-11 shrink-0 place-items-center rounded-2xl border border-gold/30 bg-gold/10 text-gold">
+            <IconQr size={22} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[16px] font-semibold">Share GoldGains</span>
+            <span className="block text-[13px] text-muted">Send friends the link or let them scan a QR code</span>
+          </span>
+          <IconChevronRight size={18} className="text-faint" />
+        </button>
         <PersonalInfo profile={profile} />
         {goal ? <BudgetCard profile={profile} goal={goal} /> : null}
         {goal ? <MacroTargets goal={goal} /> : null}
