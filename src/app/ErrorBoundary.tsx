@@ -1,4 +1,5 @@
 import { Component, type ReactNode } from 'react';
+import { Mark } from '@/ui/Brand';
 
 interface State {
   failed: boolean;
@@ -21,7 +22,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
     return (
       <div className="grid min-h-dvh place-items-center px-8 text-center">
         <div>
-          <div className="gold-text text-4xl font-black">GG</div>
+          <Mark size={56} label="GoldGains" className="mx-auto block" />
           <p className="mt-4 text-lg font-semibold">Something went sideways.</p>
           <p className="mt-1 text-sm text-muted">Your data is safe on this device. Reload to keep going.</p>
           <button className="btn btn-gold mt-6" onClick={() => location.reload()}>

@@ -1,8 +1,18 @@
 @import 'tailwindcss';
 
+/* Brand face (Michroma) for the wordmark and screen titles. One weight, Latin only, self-hosted (OFL-1.1). */
+@font-face {
+  font-family: 'Michroma';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('@fontsource/michroma/files/michroma-latin-400-normal.woff2') format('woff2');
+}
+
 @theme {
   --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, system-ui, sans-serif;
   --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
+  --font-brand: 'Michroma', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
 
   --color-bg: #000000;
   --color-surface: #0e0e10;
@@ -97,6 +107,11 @@
     background: var(--color-surface);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-card);
+  }
+  /* Michroma ships one weight; never let the browser fake a bold */
+  .font-brand {
+    font-weight: 400;
+    font-synthesis: none;
   }
   .num {
     font-variant-numeric: tabular-nums;
@@ -211,6 +226,19 @@
     transform: none;
   }
 }
+@keyframes mark-draw {
+  from {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
 @keyframes scan-line {
   0%,
   100% {
@@ -230,6 +258,10 @@
 }
 .animate-pop-in {
   animation: pop-in 320ms var(--ease-out-soft) both;
+}
+.animate-mark-draw {
+  stroke-dasharray: 1 1;
+  animation: mark-draw 1100ms var(--ease-out-soft) both;
 }
 .animate-scan-line {
   animation: scan-line 2.2s ease-in-out infinite;

@@ -1,50 +1,56 @@
-// Renders the GoldGains app icons from one SVG: black tile, gold ring, GG monogram.
+// Renders the GoldGains app icons from the same mark geometry the app uses (src/ui/markGeometry.ts):
+// graphite tile, soft gold glow, hairline ring tracks, gold double-G.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import { MARK, MARK_GOLD, MARK_PATHS } from '../src/ui/markGeometry';
 
 const out = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'icons');
 mkdirSync(out, { recursive: true });
 
-/** `pad` shrinks the mark toward the centre (maskable icons need an 80% safe zone). */
-function svg(size: number, { rounded, pad = 0 }: { rounded: boolean; pad?: number }) {
+/** `scale` is the mark's share of the tile (maskable icons keep it inside the 80% safe zone). */
+function svg(size: number, { rounded, scale = 0.64 }: { rounded: boolean; scale?: number }) {
   const s = 512;
-  const c = s / 2;
-  const scale = 1 - pad;
-  const r = 168 * scale;
-  const circ = 2 * Math.PI * r;
-  const arc = circ * 0.78;
+  const m = s * scale;
+  const o = (s - m) / 2;
+  const { center: c, outer, inner, stroke } = MARK;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${s} ${s}">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ffe08a"/>
-      <stop offset="0.55" stop-color="#f2c14e"/>
-      <stop offset="1" stop-color="#b8862a"/>
+    <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="12" y1="12" x2="88" y2="88">
+      ${MARK_GOLD.map(([off, col]) => `<stop offset="${off}" stop-color="${col}"/>`).join('')}
     </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.6">
-      <stop offset="0" stop-color="#2a2110"/>
-      <stop offset="1" stop-color="#000"/>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c1b19"/>
+      <stop offset="1" stop-color="#030303"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.42">
+      <stop offset="0" stop-color="#f2c14e" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#f2c14e" stop-opacity="0"/>
     </radialGradient>
   </defs>
+  <rect width="${s}" height="${s}" rx="${rounded ? 112 : 0}" fill="url(#tile)"/>
   <rect width="${s}" height="${s}" rx="${rounded ? 112 : 0}" fill="url(#glow)"/>
-  <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#1f1f24" stroke-width="${30 * scale}"/>
-  <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="url(#g)" stroke-width="${30 * scale}" stroke-linecap="round"
-    stroke-dasharray="${arc} ${circ}" transform="rotate(-90 ${c} ${c})"/>
-  <text x="${c}" y="${c + 52 * scale}" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-weight="900"
-    font-size="${152 * scale}" letter-spacing="${-10 * scale}" fill="url(#g)">GG</text>
+  <svg x="${o}" y="${o}" width="${m}" height="${m}" viewBox="0 0 100 100">
+    <g fill="none" stroke="#2a261e" stroke-width="${stroke}">
+      <circle cx="${c}" cy="${c}" r="${outer}"/><circle cx="${c}" cy="${c}" r="${inner}"/>
+    </g>
+    <g fill="none" stroke="url(#g)" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+      <path d="${MARK_PATHS.outer}"/><path d="${MARK_PATHS.inner}"/>
+    </g>
+  </svg>
 </svg>`;
 }
 
-const jobs: [string, number, { rounded: boolean; pad?: number }][] = [
+const jobs: [string, number, { rounded: boolean; scale?: number }][] = [
   ['icon-192.png', 192, { rounded: false }],
   ['icon-512.png', 512, { rounded: false }],
-  ['icon-maskable-512.png', 512, { rounded: false, pad: 0.18 }],
+  ['icon-maskable-512.png', 512, { rounded: false, scale: 0.56 }],
   ['apple-touch-icon.png', 180, { rounded: false }],
 ];
 
 for (const [name, size, opts] of jobs) {
   await sharp(Buffer.from(svg(size, opts))).png().toFile(join(out, name));
 }
-writeFileSync(join(out, 'icon.svg'), svg(64, { rounded: true }));
+writeFileSync(join(out, 'icon.svg'), svg(64, { rounded: true, scale: 0.78 }));
 console.log('icons written to public/icons');

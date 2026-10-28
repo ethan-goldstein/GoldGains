@@ -46,6 +46,8 @@ export function App() {
               <Route component={TodayScreen} />
             </Switch>
           </main>
+          {/* the status bar overlays the page (black-translucent); keep scrolled content out from under the clock */}
+          <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 z-30 bg-black/85 backdrop-blur-xl" style={{ height: 'env(safe-area-inset-top)' }} />
           <TabBar />
           <SheetHost />
           {scanner ? (

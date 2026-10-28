@@ -4,7 +4,7 @@ import { useUI } from '@/app/store';
 import { addDays, relativeLabel, today, weekdayShort, weekOf } from '@/domain/day';
 import { useSettings } from '@/db/hooks';
 import { db, type Exercise } from '@/db/schema';
-import { Logo } from '@/features/today/DayHeader';
+import { ScreenHeader } from '@/ui/Brand';
 import { Bars } from '@/ui/charts/Bars';
 import { Empty } from '@/ui/controls';
 import { IconDumbbell, IconFlame, IconTimer, IconTrophy } from '@/ui/icons';
@@ -60,10 +60,7 @@ export function WorkoutsScreen() {
 
   return (
     <div className="pt-safe">
-      <header className="flex items-center gap-3 px-4 pt-4 pb-3">
-        <Logo size={34} />
-        <h1 className="flex-1 text-[26px] font-bold tracking-tight">Workouts</h1>
-      </header>
+      <ScreenHeader title="Workouts" />
       <div className="space-y-3 px-3">
         <div className="grid grid-cols-2 gap-2.5">
           <button

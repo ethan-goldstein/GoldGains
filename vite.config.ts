@@ -58,7 +58,7 @@ export default defineConfig({
       },
       workbox: {
         // app shell + barcode wasm are precached; OCR engine (~7 MB) is cached on first label scan
-        globPatterns: ['**/*.{js,css,html,svg,png,webmanifest,wasm}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,webmanifest,wasm,woff2}'],
         globIgnores: ['**/ocr/**'],
         navigateFallback: `${base}index.html`,
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,

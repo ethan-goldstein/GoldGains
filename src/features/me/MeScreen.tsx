@@ -7,7 +7,7 @@ import { MACRO_COLOR } from '@/domain/nutrients';
 import { useGoalFor, useProfile, useSettings } from '@/db/hooks';
 import { deriveGoals, saveGoals, saveProfile, updateSettings } from '@/db/repo';
 import { db, type Goals } from '@/db/schema';
-import { Logo } from '@/features/today/DayHeader';
+import { Lockup, ScreenHeader } from '@/ui/Brand';
 import { NumberField, Toggle } from '@/ui/controls';
 import { IconChevronRight, IconScale } from '@/ui/icons';
 import { toast } from '@/ui/Toast';
@@ -23,15 +23,11 @@ export function MeScreen() {
 
   return (
     <div className="pt-safe">
-      <header className="flex items-center gap-3 px-4 pt-4 pb-3">
-        <Logo size={34} />
-        <div className="flex-1">
-          <h1 className="text-[26px] font-bold tracking-tight">Me</h1>
-        </div>
+      <ScreenHeader title="Me">
         <button onClick={() => open({ type: 'weight' })} className="btn btn-ghost min-h-10 gap-1.5 px-3 text-[13px]">
           <IconScale size={18} /> Weigh in
         </button>
-      </header>
+      </ScreenHeader>
       <div className="space-y-3 px-3">
         <SummaryCard profile={profile} goal={goal} lastWeighIn={latestWeight?.date} />
         <PersonalInfo profile={profile} />
@@ -363,8 +359,10 @@ function UnitRow({ label, value, options, onChange }: { label: string; value: st
 function About() {
   return (
     <section className="px-2 pt-2 pb-6 text-center text-[11.5px] leading-relaxed text-faint">
-      <div className="gold-text text-[15px] font-black tracking-tight">GoldGains</div>
-      <p className="mt-1">Your logs live only on this device. Barcode lookups and packaged-food searches are sent to Open Food Facts; nothing else leaves your phone.</p>
+      <div className="flex justify-center">
+        <Lockup size={22} />
+      </div>
+      <p className="mt-2">Your logs live only on this device. Barcode lookups and packaged-food searches are sent to Open Food Facts; nothing else leaves your phone.</p>
       <p className="mt-2">
         Packaged food data © Open Food Facts contributors, ODbL. Everyday foods: USDA FoodData Central (SR Legacy), public domain. Exercise estimates: Compendium of Physical
         Activities. Budget: Mifflin-St Jeor. Not medical advice.

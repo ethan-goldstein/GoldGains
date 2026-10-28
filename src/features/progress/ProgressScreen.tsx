@@ -7,11 +7,11 @@ import { kgToLb } from '@/domain/profile';
 import { dayBudget, useAllGoals, useProfile, useRange, useSettings, type DaySummary } from '@/db/hooks';
 import { pickGoal } from '@/db/repo';
 import { db, type Goals, type Settings } from '@/db/schema';
-import { Logo } from '@/features/today/DayHeader';
 import { Legend } from '@/features/workouts/WorkoutsScreen';
 import { Bars, type BarDatum } from '@/ui/charts/Bars';
 import { LineChart } from '@/ui/charts/Line';
 import { MiniRing } from '@/ui/charts/Ring';
+import { ScreenHeader } from '@/ui/Brand';
 import { Segmented } from '@/ui/controls';
 import { IconCheck, IconChevronLeft, IconChevronRight, IconScale } from '@/ui/icons';
 
@@ -26,10 +26,7 @@ function statusOf(s: DaySummary | undefined, goal: Goals | undefined, settings: 
 export function ProgressScreen() {
   return (
     <div className="pt-safe">
-      <header className="flex items-center gap-3 px-4 pt-4 pb-3">
-        <Logo size={34} />
-        <h1 className="flex-1 text-[26px] font-bold tracking-tight">Progress</h1>
-      </header>
+      <ScreenHeader title="Progress" />
       <div className="space-y-3 px-3">
         <CalendarCard />
         <TrendsCard />

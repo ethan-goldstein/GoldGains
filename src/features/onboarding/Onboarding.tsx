@@ -4,7 +4,7 @@ import { budgetFor, DEFAULT_PROFILE, type Profile } from '@/domain/profile';
 import { logWeight, saveProfile, updateSettings } from '@/db/repo';
 import { db } from '@/db/schema';
 import { ProfileForm } from '@/features/me/ProfileForm';
-import { Logo } from '@/features/today/DayHeader';
+import { Mark, Wordmark } from '@/ui/Brand';
 import { IconShare } from '@/ui/icons';
 
 const isIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -30,15 +30,16 @@ export function Onboarding() {
       {step === 'welcome' ? (
         <div className="animate-pop-in flex flex-1 flex-col">
           <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <div className="relative">
-              <div className="absolute inset-0 scale-150 rounded-full bg-gold/25 blur-3xl" />
-              <Logo size={88} />
+            <div className="relative grid place-items-center">
+              <div className="absolute size-44 rounded-full bg-gold/15 blur-3xl" />
+              <Mark size={124} track draw className="relative" />
             </div>
-            <h1 className="mt-8 text-[38px] leading-tight font-black tracking-tight">
-              Gold<span className="gold-text">Gains</span>
+            <h1 className="animate-pop-in mt-10 [animation-delay:650ms]">
+              <Wordmark size={30} />
             </h1>
-            <p className="mt-3 max-w-[300px] text-[16px] text-muted">Calories, macros and workouts — scanned, tracked and graded. All on your phone.</p>
-            <div className="mt-8 flex gap-2">
+            <p className="animate-pop-in mt-4 text-[11px] font-medium tracking-[0.3em] text-gold/80 uppercase [animation-delay:750ms]">Calories · Macros · Workouts</p>
+            <p className="animate-pop-in mt-5 max-w-[290px] text-[15px] text-balance text-muted [animation-delay:850ms]">Scan it, log it, see it graded. Everything stays on your phone.</p>
+            <div className="animate-pop-in mt-8 flex gap-2 [animation-delay:950ms]">
               {[
                 ['var(--color-protein)', 'Protein'],
                 ['var(--color-carbs)', 'Carbs'],
@@ -58,7 +59,7 @@ export function Onboarding() {
       ) : step === 'install' ? (
         <div className="animate-pop-in flex flex-1 flex-col">
           <div className="flex-1 pt-10">
-            <h2 className="text-[28px] font-bold tracking-tight">Put it on your home screen</h2>
+            <h2 className="font-brand text-[20px] leading-snug tracking-[-0.01em]">Put it on your home screen</h2>
             <p className="mt-2 text-muted">GoldGains runs full-screen and offline like a real app. Install it first — Safari and the home-screen app keep separate data.</p>
             <ol className="mt-8 space-y-4">
               {[
@@ -86,7 +87,7 @@ export function Onboarding() {
       ) : (
         <div className="animate-pop-in flex flex-1 flex-col">
           <div className="pt-6 pb-4">
-            <h2 className="text-[28px] font-bold tracking-tight">About you</h2>
+            <h2 className="font-brand text-[20px] leading-snug tracking-[-0.01em]">About you</h2>
             <p className="mt-1 text-muted">This sets your daily calorie budget. You can change it any time in Me.</p>
           </div>
           <div className="flex-1">
