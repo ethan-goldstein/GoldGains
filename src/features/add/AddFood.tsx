@@ -28,7 +28,15 @@ export function AddFood({ meal, hasBack }: { meal: MealKey; hasBack: boolean }) 
   const [offMsg, setOffMsg] = useState('');
 
   const myFoods = useLiveQuery(() => db.foods.toArray(), []) ?? NONE;
-  const recents = useLiveQuery(() => db.foods.orderBy('lastUsedAt').reverse().filter((f) => !!f.lastUsedAt).limit(40).toArray(), []) ?? NONE;
+  // sorted here rather than with a reverse query: Safari can fail those with "Unable to open cursor"
+  const recents = useMemo(
+    () =>
+      myFoods
+        .filter((f) => !!f.lastUsedAt)
+        .sort((a, b) => b.lastUsedAt! - a.lastUsedAt!)
+        .slice(0, 40),
+    [myFoods],
+  );
   const favorites = useLiveQuery(() => db.foods.where('favorite').equals(1).toArray(), []) ?? NONE;
   const savedMeals = useLiveQuery(() => db.savedMeals.orderBy('name').toArray(), []) ?? NONE;
 

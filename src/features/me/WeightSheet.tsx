@@ -18,7 +18,7 @@ export function WeightSheet() {
   const toUnit = (kg: number) => (imperial ? kgToLb(kg) : kg);
   const [date, setDate] = useState(today());
   const [val, setVal] = useState<number | undefined>(Number(toUnit(profile.weightKg).toFixed(1)));
-  const recent = useLiveQuery(() => db.weights.orderBy('date').reverse().limit(8).toArray(), []) ?? [];
+  const recent = useLiveQuery(async () => (await db.weights.orderBy('date').toArray()).slice(-8).reverse(), []) ?? [];
 
   return (
     <Sheet

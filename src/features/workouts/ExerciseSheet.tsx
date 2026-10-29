@@ -66,7 +66,7 @@ export function ExerciseSheet({ exerciseId, activityId, strength, hasBack }: { e
 function ActivityPicker({ onPick }: { onPick: (a: Activity) => void }) {
   const [q, setQ] = useState('');
   const recent = useLiveQuery(async () => {
-    const rows = await db.exercises.orderBy('createdAt').reverse().limit(30).toArray();
+    const rows = (await db.exercises.orderBy('createdAt').toArray()).slice(-30).reverse();
     const ids: string[] = [];
     for (const r of rows) if (r.activityId && r.kind !== 'strength' && !ids.includes(r.activityId)) ids.push(r.activityId);
     return ids.slice(0, 6).map((id) => ACTIVITY_BY_ID.get(id)).filter((a): a is Activity => !!a);

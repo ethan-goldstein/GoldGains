@@ -48,7 +48,7 @@ export function liftRecords(sessions: Exercise[], unit: 'lb' | 'kg'): Map<string
 
 /** The most recent logged sets for a lift before `beforeDate` (for "last time" hints). */
 export async function lastLift(liftKey: string, excludeId?: string): Promise<{ date: string; log: LiftLog } | undefined> {
-  const rows = await db.exercises.where('kind').equals('strength').reverse().sortBy('date');
+  const rows = (await db.exercises.where('kind').equals('strength').sortBy('date')).reverse();
   for (const x of rows) {
     if (x.id === excludeId) continue;
     const l = x.lifts?.find((y) => (y.liftId || y.name.toLowerCase()) === liftKey);

@@ -159,7 +159,7 @@ export async function saveFood(f: Omit<Food, 'id' | 'createdAt' | 'updatedAt' | 
   let existing: Food | undefined;
   if (f.id) existing = await db.foods.get(f.id);
   if (!existing && f.barcode) existing = await db.foods.where('barcode').equals(f.barcode).first();
-  if (!existing && f.ref && f.source !== 'custom') existing = await db.foods.where('ref').equals(f.ref).filter((x) => x.source === f.source).first();
+  if (!existing && f.ref && f.source !== 'custom') existing = (await db.foods.where('ref').equals(f.ref).toArray()).find((x) => x.source === f.source);
   const row: Food = {
     favorite: 0,
     useCount: 0,
@@ -242,12 +242,20 @@ export async function logWeight(date: DayKey, kg: number): Promise<void> {
     const same = await db.weights.where('date').equals(date).first();
     const row: WeightLog = { id: same?.id ?? uid(), date, kg, createdAt: Date.now() };
     await db.weights.put(row);
-    const latest = await db.weights.orderBy('date').last();
+    const latest = await latestWeighIn();
     if (latest && latest.id === row.id) {
       const p = await getProfile();
       await saveProfile({ ...p, weightKg: kg });
     }
   });
+}
+
+/**
+ * Latest weigh-in, read forward and taken from the end. Safari can fail reverse and
+ * unique-key queries (`.last()`, `.reverse()`, `uniqueKeys()`) with "Unable to open cursor".
+ */
+export async function latestWeighIn(): Promise<WeightLog | undefined> {
+  return (await db.weights.orderBy('date').toArray()).at(-1);
 }
 
 export async function deleteWeight(id: string): Promise<void> {

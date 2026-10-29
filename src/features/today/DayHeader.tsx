@@ -1,7 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useMemo } from 'react';
 import { useUI } from '@/app/store';
-import { addDays, dayKey, parseDay, relativeLabel, today, weekdayLetter, weekOf } from '@/domain/day';
+import { addDays, dayKey, parseDay, relativeLabel, today, weekdayLetter, weekOf, type DayKey } from '@/domain/day';
 import { streak } from '@/domain/score';
 import { dayBudget, useAllGoals, useRange, useSettings } from '@/db/hooks';
 import { pickGoal } from '@/db/repo';
@@ -17,8 +17,16 @@ export function DayHeader({ onCalendar }: { onCalendar: () => void }) {
   const range = useRange(week[0]!, week[6]!);
   const goals = useAllGoals();
   const settings = useSettings();
-  const loggedDays = useLiveQuery(async () => new Set((await db.entries.orderBy('date').uniqueKeys()) as string[]), []);
   const t = today();
+  // one count() per day back from today, stopping at the first gap. Not uniqueKeys(): Safari
+  // fails it with "Unable to open cursor" on an empty table, which crashed Today after setup.
+  const loggedDays = useLiveQuery(async () => {
+    const days = new Set<DayKey>();
+    const logged = async (d: DayKey) => (await db.entries.where('date').equals(d).count()) > 0;
+    if (await logged(t)) days.add(t);
+    for (let d = addDays(t, -1); await logged(d); d = addDays(d, -1)) days.add(d);
+    return days;
+  }, [t]);
   const streakN = useMemo(() => (loggedDays ? streak(loggedDays, t) : 0), [loggedDays, t]);
   const isToday = date === t;
 

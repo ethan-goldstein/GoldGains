@@ -20,7 +20,8 @@ export function WorkoutsScreen() {
   const t = today();
   const week = weekOf(t);
   const since = addDays(t, -90);
-  const rows = useLiveQuery(() => db.exercises.where('date').aboveOrEqual(since).reverse().sortBy('date'), [since]) ?? NONE;
+  // newest first, reversed in JS: Safari can fail reverse queries with "Unable to open cursor"
+  const rows = useLiveQuery(async () => (await db.exercises.where('date').aboveOrEqual(since).sortBy('date')).reverse(), [since]) ?? NONE;
   const strength = useLiveQuery(() => db.exercises.where('kind').equals('strength').toArray(), []) ?? NONE;
   const records = useMemo(() => [...liftRecords(strength, settings.liftUnit).values()].sort((a, b) => b.e1rm - a.e1rm).slice(0, 8), [strength, settings.liftUnit]);
 

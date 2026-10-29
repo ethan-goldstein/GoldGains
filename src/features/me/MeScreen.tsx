@@ -5,8 +5,8 @@ import { today, shortDate } from '@/domain/day';
 import { budgetFor, formatHeight, formatWeight, kgToLb, macroGrams, MACRO_PRESETS, weeksToGoal, type Profile } from '@/domain/profile';
 import { MACRO_COLOR } from '@/domain/nutrients';
 import { useGoalFor, useProfile, useSettings } from '@/db/hooks';
-import { deriveGoals, saveGoals, saveProfile, updateSettings } from '@/db/repo';
-import { db, type Goals } from '@/db/schema';
+import { deriveGoals, latestWeighIn, saveGoals, saveProfile, updateSettings } from '@/db/repo';
+import type { Goals } from '@/db/schema';
 import { Lockup, ScreenHeader } from '@/ui/Brand';
 import { NumberField, Toggle } from '@/ui/controls';
 import { IconChevronRight, IconQr, IconScale } from '@/ui/icons';
@@ -19,7 +19,7 @@ export function MeScreen() {
   const goal = useGoalFor(today());
   const settings = useSettings();
   const open = useUI((s) => s.open);
-  const latestWeight = useLiveQuery(() => db.weights.orderBy('date').last(), []);
+  const latestWeight = useLiveQuery(latestWeighIn, []);
 
   return (
     <div className="pt-safe">
