@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 /** Numeric input that keeps the user's text while typing (so "1." and "" are allowed) and reports numbers. */
 export function NumberField({
@@ -27,7 +27,15 @@ export function NumberField({
   integer?: boolean;
 }) {
   const [text, setText] = useState(value === undefined ? '' : String(round(value)));
+  const focused = useRef(false);
+  // an emptied field, or a number still short of `min` ("2" on the way to "25"), is a draft:
+  // don't report it and don't overwrite it while the user is still typing
+  const isDraft = (t: string) => {
+    const n = parse(t);
+    return n === undefined || n < min;
+  };
   useEffect(() => {
+    if (focused.current && isDraft(text)) return;
     const parsed = parse(text);
     if (parsed !== value) setText(value === undefined ? '' : String(round(value)));
     // only resync when the outside value changes
@@ -45,14 +53,25 @@ export function NumberField({
         className="num w-full min-w-0 bg-transparent text-right outline-none placeholder:text-faint"
         placeholder={placeholder}
         value={text}
-        onFocus={(e) => e.currentTarget.select()}
+        onFocus={(e) => {
+          focused.current = true;
+          e.currentTarget.select();
+        }}
+        onBlur={() => {
+          focused.current = false;
+          const n = parse(text);
+          if (n !== undefined && n < min) {
+            onChange(min);
+            setText(String(round(min)));
+          } else if (n !== value) setText(value === undefined ? '' : String(round(value)));
+        }}
         onChange={(e) => {
           const t = e.target.value.replace(',', '.');
           if (!/^\d*\.?\d*$/.test(t)) return;
           setText(t);
           const n = parse(t);
           if (n === undefined) onChange(undefined);
-          else onChange(Math.min(max ?? Infinity, Math.max(min, n)));
+          else if (n >= min) onChange(Math.min(max ?? Infinity, n));
         }}
       />
       {suffix ? <span className="shrink-0 text-sm text-muted">{suffix}</span> : null}
